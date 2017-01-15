@@ -33,7 +33,7 @@ for (var i = 0; i < accounts.users.length; i++) {
     var user = accounts.users[i];
     // add arbitrary attributes to users, for example 'elevation'
     if (user.username == "TestUser") {
-      user.attr['elevation'] = "Admin;
+      user.attr['elevation'] = "Admin";
     }
 }
 ```
