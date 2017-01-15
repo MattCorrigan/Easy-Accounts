@@ -15,6 +15,9 @@ module.exports.unpackData = function(data) {
     module.exports.users = [];
     
     var lines = data.split("\n");
+    if (lines.length < 3) {
+        return;
+    }
     
     for (var i = 0; i < lines.length; i += 3) {
         var user = lines[i];
@@ -50,23 +53,24 @@ module.exports.packData = function() {
     return data;
 }
 
-module.exports.refreshFromFile = function(filename) {
-    module.exports.fs.readFile('/account_data/' + filename, 'utf8', function (err,data) {
-      if (err) {
-        return err;
-      }
-      module.exports.unpackData(data);
-    });
-}
-
 module.exports.save = function(filename) {
     
     data = module.exports.packData();
     
-    module.exports.fs.writeFile("/account_data/" + filename, data, function(err) {
+    module.exports.fs.writeFile(__dirname + "/account_data/" + filename, data, function(err) {
         if(err) {
             return console.log(err);
         }
+    });
+}
+
+module.exports.refreshFromFile = function(filename) {
+    module.exports.fs.readFile(__dirname + '/account_data/' + filename, 'utf8', function (err,data) {
+      if (err) {
+        fs.writeFile(__dirname + "/account_data/", {flag: 'wx'}, function (err, data){}); // create file
+      } else {
+        module.exports.unpackData(data);
+      }
     });
 }
 
