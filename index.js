@@ -1,18 +1,18 @@
-var fs = require("fs");
+module.exports.fs = require("fs");
 
-SAVE_FILE = "accounts.data"
+module.exports.SAVE_FILE = "accounts.data"
 
-var User = function(name, password, attr) {
+module.exports.User = function(name, password, attr) {
     this.username = name;
     this.password = password;
     
     this.attr = attr; // used for storing extra variables
 }
 
-var users = [];
+module.exports.users = [];
 
-function unpackData(data) {
-    users = [];
+module.exports.unpackData = function(data) {
+    module.exports.users = [];
     
     var lines = data.split("\n");
     
@@ -28,17 +28,17 @@ function unpackData(data) {
             attr[prop] = val;
         }
         
-        users.push(new User(user, pass, attr));
+        module.exports.users.push(new module.exports.User(user, pass, attr));
     }
     
 }
 
-function packData() {
+module.exports.packData = function() {
     
     var data = "";
     
-    for (var i = 0; i < users.length; i++) {
-        var u = users[i];
+    for (var i = 0; i < module.exports.users.length; i++) {
+        var u = module.exports.users[i];
         data += u.username + "\n";
         data += u.password + "\n";
         for (var property in u.attr) {
@@ -50,75 +50,71 @@ function packData() {
     return data;
 }
 
-function refreshFromFile(filename) {
-    fs.readFile('/account_data/' + filename, 'utf8', function (err,data) {
+module.exports.refreshFromFile = function(filename) {
+    module.exports.fs.readFile('/account_data/' + filename, 'utf8', function (err,data) {
       if (err) {
-        return console.log(err);
+        return err;
       }
-      unpackData(data);
+      module.exports.unpackData(data);
     });
 }
 
-function save(filename) {
+module.exports.save = function(filename) {
     
-    data = packData();
+    data = module.exports.packData();
     
-    fs.writeFile("/account_data/" + filename, data, function(err) {
+    module.exports.fs.writeFile("/account_data/" + filename, data, function(err) {
         if(err) {
             return console.log(err);
         }
     });
 }
 
-function createUser(n, p) {
-    var u = new User(n, p, {});
-    users.push(u);
+module.exports.createUser = function(n, p) {
+    var u = new module.exports.User(n, p, {});
+    module.exports.users.push(u);
     
     // save data
-    save(SAVE_FILE);
+    module.exports.save(module.exports.SAVE_FILE);
     
     return u;
 }
 
-function removeUser(n) {
-    var index = users.indexOf(getUserByName(n));
+module.exports.removeUser = function(n) {
+    var index = module.exports.users.indexOf(module.exports.getUserByName(n));
     if (index > -1) {
-        users.splice(index, 1);
-        save(SAVE_FILE);
+        module.exports.users.splice(index, 1);
+        module.exports.save(module.exports.SAVE_FILE);
     }
 }
 
-function getUserByName(name) {
-    for (var i = 0; i < users.length; i++) {
-        if (users[i].username == name) {
-            return users[i];
+module.exports.getUserByName = function(name) {
+    for (var i = 0; i < module.exports.users.length; i++) {
+        if (module.exports.users[i].username == name) {
+            return module.exports.users[i];
         }
     }
     return undefined;
 }
 
-function getAll() {
-    return users;
+module.exports.getAll = function() {
+    return module.exports.users;
 }
 
-var autoSave = setInterval(function() {save(SAVE_FILE)}, 1000 * 60); // auto-save every minute
+module.exports.autoSave = setInterval(function() {module.exports.save(module.exports.SAVE_FILE)}, 1000 * 60); // auto-save every minute
 
-function turnOffAutoSave() {
-    if (autoSave !== undefined) {
+module.exports.turnOffAutoSave = function() {
+    if (module.exports.autoSave !== undefined) {
         window.clearInterval(autoSave);
-        autoSave = undefined;
+        module.exports.autoSave = undefined;
     }
 }
 
-function turnOnAutoSave() {
-    if (autoSave == undefined) {
-        autoSave = setInterval(function() {save(SAVE_FILE)}, 1000 * 60); // auto-save every minute
+module.exports.turnOnAutoSave = function() {
+    if (module.exports.autoSave == undefined) {
+        module.exports.autoSave = setInterval(function() {module.exports.save(module.exports.SAVE_FILE)}, 1000 * 60); // auto-save every minute
     }
 }
 
 // load accounts to begin with
-refreshFromFile(SAVE_FILE);
-
-exports.printMsg = function() {
-  console.log("Loaded accounts package");
-}
+module.exports.refreshFromFile(module.exports.SAVE_FILE);
