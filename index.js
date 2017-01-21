@@ -48,7 +48,9 @@ module.exports.packData = function() {
             data += property + ":" + u.attr[property] + ";";
         }
         data = data.slice(0, -1); // remove last semicolon
+        data += "\n";
     }
+    data = data.slice(0, -1); // remove last newline
     
     return data;
 }
