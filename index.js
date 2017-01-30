@@ -15,14 +15,19 @@ module.exports.unpackData = function(data) {
     module.exports.users = [];
     
     var lines = data.split("\n");
-    if (lines.length < 3) {
+    if (lines.length < 1) {
         return;
     }
     
-    for (var i = 0; i < lines.length; i += 3) {
-        var user = lines[i];
-        var pass = lines[i+1];
-        var attrPairs = lines[i+2].split(";");
+    for (var i = 0; i < lines.length; i++) {
+        
+        if (lines[i].length < 2) {
+            continue;
+        }
+        
+        var user = lines[i].split("|")[0];
+        var pass = lines[i].split("|")[1];
+        var attrPairs = lines[i].split("|")[2].split(";");
         
         var attr = {};
         for (var j = 0; j < attrPairs.length; j++) {
@@ -42,12 +47,17 @@ module.exports.packData = function() {
     
     for (var i = 0; i < module.exports.users.length; i++) {
         var u = module.exports.users[i];
-        data += u.username + "\n";
-        data += u.password + "\n";
+        data += u.username + "|";
+        data += u.password + "|";
+        var props = false;
         for (var property in u.attr) {
             data += property + ":" + u.attr[property] + ";";
+            props = true;
         }
-        data = data.slice(0, -1); // remove last semicolon
+        if (props) {
+            data = data.slice(0, -1); // remove last semicolon
+        }
+        data += "\n";
     }
     
     return data;
